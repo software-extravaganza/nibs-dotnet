@@ -132,7 +132,12 @@ module App
       resultprt = NativeBridge.get_native_metadata(2)
       result = String.new(resultprt.read_string)
       NativeBridge.free_ptr(resultprt)
-      #puts result
+      puts "###############################"
+      puts "#####   NATIVE METADATA   #####"
+      puts "###############################"
+      puts result
+      puts "###############################"
+      
       json_metadata = JSON.parse(result)
 
       if json_metadata.has_key?("Error")
@@ -157,8 +162,8 @@ end
 entry_lib = File.join(File.absolute_path(File.dirname(__FILE__)), "../Library/bin/release/netcoreapp3.0/win-x64/native/Library.dll");
 App::NativeBridge.process(entry_lib)
 
-puts App::NativeBridge::Library2::NativeCore.subtract(2, 5)
-puts App::NativeBridge::Library2::NativeCore.append("me", "too")
+puts App::NativeBridge::Library::NativeCore.subtract(2, 5)
+puts App::NativeBridge::Library::NativeCore.append("me", "too")
 
 
 
