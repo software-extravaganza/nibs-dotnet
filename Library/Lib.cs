@@ -21,6 +21,7 @@ namespace Library {
         public List<string> Assemblies { get; set; } = new List<string>();
     }
     public class NativeCore {
+        public const int BUFFER_SIZE = 500;
         //public const string NULL_JSON_VALUE = "null";
         //public static IDictionary<IntPtr, ArrayBufferWriter> arrayBufferHold = new Dictionary<IntPtr, ArrayBufferWriter>();
         [NativeCallable (EntryPoint = "add", CallingConvention = CallingConvention.Cdecl)]
@@ -34,9 +35,7 @@ namespace Library {
         }
 
         [NativeCallable (EntryPoint = "append", CallingConvention = CallingConvention.Cdecl)]
-        [
-            return :IntendedType (typeof (string))
-        ]
+        [return :IntendedType (typeof (string))]
         public static IntPtr Append ([IntendedType (typeof (string))] IntPtr a, [IntendedType (typeof (string))] IntPtr b) {
             return Marshal.StringToCoTaskMemUTF8 (Marshal.PtrToStringUTF8 (a) + Marshal.PtrToStringUTF8 (b));
         }
@@ -46,18 +45,15 @@ namespace Library {
         //     return a+b;
         // }
         [NativeCallable (EntryPoint = "get_native_metadata", CallingConvention = CallingConvention.Cdecl)]
-        [
-            return :IntendedType (typeof (string))
-        ]
-        public static IntPtr GetNativeMetadata ([IntendedType (typeof (ProgrammingPlatform))] int progammingPlaformNumber) {
+        [return :IntendedType (typeof (string))]
+        public static IntPtr GetNativeMetadata ([IntendedType (typeof (ProgrammingPlatform))] int programmingPlaformNumber) {
             var utf8 = new UTF8Encoding ();
             try{
-                var output = new ArrayBufferWriter<byte>();
+                var output = new ArrayBufferWriter<byte>(BUFFER_SIZE);
                 var json = new Utf8JsonWriter (output, state : default);
-                json.WriteStartObject ();
+                json.WriteStartObject();
 
-                if (!File.Exists(Path.Combine(Directory.GetCurrentDirectory(), "config.json")))
-                {
+                if (!File.Exists(Path.Combine(Directory.GetCurrentDirectory(), "config.json"))) {
                     json.WriteString("Error", "No config found config.json");
                 }
                 else
@@ -91,16 +87,19 @@ namespace Library {
                         foreach (var assembly in new[] { typeof(NativeCore).Assembly })
                         {
                             var assemblyFile = new FileInfo($"{Assembly.GetExecutingAssembly().FullName.Split(",").FirstOrDefault()}.dll");
-                            var namespaces = ProcessAssembly(assembly, (ProgrammingPlatform)progammingPlaformNumber);
+                            var namespaces = ProcessAssembly(assembly, (ProgrammingPlatform)programmingPlaformNumber);
                             assemblies.Add(assemblyFile.FullName, new NativeAssemblyDescription(assemblyFile.Name, assemblyFile.DirectoryName.Replace("\\", "/")) { Namespaces = namespaces });
                         }
 
                         NativeCore.ListToJsonArrayHelper(json, "Data", assemblies.Values.ToList());
                     }
                     catch (InvalidOperationException ioex)
-                    {
+                    { 
                         json.WriteString("Error", "Error build metadata.");
                         json.WriteString("Exception", ioex.ToString());
+                    }
+                    catch(Exception ex){
+
                     }
                 }
 
@@ -112,13 +111,14 @@ namespace Library {
                 //arrayBufferHold.Add(holdPointer, output);
                 return holdPointer;
             }
-            catch (InvalidOperationException ioex){
-                var catchOutput = new ArrayBufferWriter<byte>(1024);
+            catch (Exception ex){
+                var catchOutput = new ArrayBufferWriter<byte>(BUFFER_SIZE);
                 var catchJson = new Utf8JsonWriter (catchOutput, state : default);
                 catchJson.WriteStartObject ();
                 catchJson.WriteString("Error", "Error processing or validating metadata.");
-                catchJson.WriteString("Exception", ioex.ToString());
+                catchJson.WriteString("Exception", ex.ToString());
                 catchJson.WriteEndObject ();
+                catchJson.Flush();
                 return Marshal.StringToCoTaskMemUTF8 (utf8.GetString (catchOutput.OutputAsSpan));
             }
         }

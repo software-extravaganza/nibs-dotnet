@@ -20,7 +20,7 @@ dotnet publish /p:NativeLib=Shared -r <runtime-indetifier> -c release
 > ### Linux Example ###
 > ``` bash
 > dotnet publish /p:NativeLib=Shared -r linux-x64 -c release
-> ```
+> ``` 
 >
 > ### macOS Example ###
 > ``` bash
