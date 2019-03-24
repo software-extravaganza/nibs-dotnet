@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Library
+namespace Nibs.NativeHost
 {
     public class NativeClassDescription : INativeClassDescription {
         public NativeClassDescription (string name) {

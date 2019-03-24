@@ -1,4 +1,4 @@
-namespace Library
+namespace Nibs.NativeHost
 {
     public interface INativeTypeDescription
     {

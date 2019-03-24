@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Library
+namespace Nibs.NativeHost
 {
     public interface INativeClassDescription
     {

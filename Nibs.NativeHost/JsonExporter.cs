@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 
-namespace Library
+namespace Nibs.NativeHost
 {
     internal class JsonExporter : INativeExporter
     {

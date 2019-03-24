@@ -11,7 +11,7 @@ using System.Text.Json;
 using System.Text.RegularExpressions;
 using Microsoft.Extensions.Configuration;
 
-namespace Library
+namespace Nibs.NativeHost
 {
     public interface IFastJsonConvertable {
         void ToJson (ref Utf8JsonWriter jsonWriter, string? name = null);

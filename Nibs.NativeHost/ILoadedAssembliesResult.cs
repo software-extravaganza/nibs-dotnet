@@ -1,4 +1,4 @@
-namespace Library
+namespace Nibs.NativeHost
 {
     internal interface ILoadedAssembliesResult
     {

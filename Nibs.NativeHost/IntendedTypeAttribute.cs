@@ -1,7 +1,7 @@
 using System;
 using System.Text.Json;
 
-namespace Library
+namespace Nibs.NativeHost
 {
     [AttributeUsage (AttributeTargets.ReturnValue | AttributeTargets.Parameter, AllowMultiple = false, Inherited = true)]
     public class IntendedTypeAttribute : Attribute, IFastJsonConvertable {

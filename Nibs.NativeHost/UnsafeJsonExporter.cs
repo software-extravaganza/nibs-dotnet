@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Library
+namespace Nibs.NativeHost
 {
     internal class UnsafeJsonExporter : INativeExporter
     {

@@ -1,7 +1,7 @@
 using System;
 using System.Text.Json;
 
-namespace Library
+namespace Nibs.NativeHost
 {
     public class NativeTypeDescription : INativeTypeDescription {
 

@@ -3,7 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Text.Json;
 
-namespace Library
+namespace Nibs.NativeHost
 {
     public class NativeAssemblyDescription : INativeAssemblyDescription {
         public NativeAssemblyDescription (string fileName, string directory) {

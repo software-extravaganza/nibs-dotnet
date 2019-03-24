@@ -1,9 +1,9 @@
 ﻿using System;
 using Xunit;
-using Library;
+using Nibs.NativeHost;
 using System.Runtime.InteropServices;
 
-namespace Library_Tests
+namespace Nibs.NativeHost.Tests
 {
     public class NibsMetadataTests
     {

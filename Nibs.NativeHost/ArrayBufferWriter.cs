@@ -7,7 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 #nullable disable
-namespace Library {
+namespace Nibs.NativeHost {
    public sealed class ArrayBufferWriter<T> : IBufferWriter<T>, IDisposable
     {
         private T[] _rentedBuffer;

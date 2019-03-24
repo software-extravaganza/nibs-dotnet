@@ -1,6 +1,6 @@
 using System;
 
-namespace Library
+namespace Nibs.NativeHost
 {
     public class NativeSourceSettingLoadResult : INativeSourceSettingLoadResult{
     public NativeSourceSettingLoadResult(INativeSourceSettings settings, string? error = null, Exception? exception = null)

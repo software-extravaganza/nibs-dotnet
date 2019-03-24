@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Text.Json;
 
-namespace Library
+namespace Nibs.NativeHost
 {
     public class NativeMethodDescription : INativeMethodDescription {
         public string Name { get; set; } = string.Empty;
