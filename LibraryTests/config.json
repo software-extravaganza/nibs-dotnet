@@ -1,7 +1,0 @@
-{   
-    "NativeSources":{
-        "Assemblies": [
-            "./Library.dll"
-        ]
-    }
-}

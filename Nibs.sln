@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26124.0
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Library", "Library\Library.csproj", "{8C370615-2218-4ED5-B9F8-0F66F2ED5263}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nibs.NativeHost", "Nibs.NativeHost\Nibs.NativeHost.csproj", "{8C370615-2218-4ED5-B9F8-0F66F2ED5263}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibraryTests", "LibraryTests\LibraryTests.csproj", "{9C66E431-0B94-4307-A9D4-A54223D77FD1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nibs.NativeHost.Tests", "Nibs.NativeHost.Tests\Nibs.NativeHost.Tests.csproj", "{9C66E431-0B94-4307-A9D4-A54223D77FD1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

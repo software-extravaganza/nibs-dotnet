@@ -70,7 +70,12 @@ namespace Library
             // foreach(var assemblyPath in nativeSourceSettings.Assemblies.Distinct()){ 
             //     string exactAssemblyPath = Path.GetFullPath(assemblyPath);
             //     if(File.Exists(exactAssemblyPath)){
-            //         var assemblyLoaded = AssemblyLoadContext.Default.LoadFromAssemblyPath(exactAssemblyPath);
+                    
+            //         var resolver = new AssemblyDependencyResolver(exactAssemblyPath);
+            //         var assemblyPath = resolver.ResolveAssemblyToPath(assemblyName);
+            //         //var assemblyBytes = File.ReadAllBytes(exactAssemblyPath);
+            //         //var assemblyLoaded = Assembly.Load(assemblyBytes);
+            //         //var assemblyLoaded = AssemblyLoadContext.Default.LoadFromAssemblyPath(exactAssemblyPath);
             //         assembliesLoaded.Add(assemblyLoaded);
             //     }
             //     else{
@@ -78,7 +83,7 @@ namespace Library
             //     }
             // }
 
-            foreach (var assembly in assembliesLoaded) {
+            foreach (var assembly in assembliesLoaded.GroupBy(a => a.Location).Select(g => g.First()).ToList()) {
                 var assemblyFile = new FileInfo($"{Assembly.GetExecutingAssembly().FullName.Split(",").FirstOrDefault()}.dll");
                 var namespaces = ProcessAssembly(assembly, (ProgrammingPlatform)programmingPlaformNumber);
                 assemblies.Add(assemblyFile.FullName, new NativeAssemblyDescription(assemblyFile.Name, assemblyFile.DirectoryName.Replace("\\", "/")) { Namespaces = namespaces });
