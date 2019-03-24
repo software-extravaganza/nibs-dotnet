@@ -118,7 +118,7 @@ module App
       ffi_lib lib_path
       functions = [
         [:free_ptr, [:pointer], :void],
-        [:get_native_metadata, [:int], :pointer],
+        [:get_native_metadata, [:int, :int], :pointer],
       ]
     
       functions.each do |func|
@@ -129,7 +129,7 @@ module App
         end
       end
 
-      resultprt = NativeBridge.get_native_metadata(2)
+      resultprt = NativeBridge.get_native_metadata(2, 1)
       result = String.new(resultprt.read_string)
       NativeBridge.free_ptr(resultprt)
       puts "###############################"

@@ -1,7 +1,7 @@
 {   
     "NativeSources":{
         "Assemblies": [
-            "../Library/bin/release/netcoreapp3.0/win-x64/native/Library.dll"
+            "./Library.dll"
         ]
     }
 }
