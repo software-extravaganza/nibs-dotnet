@@ -1,11 +1,20 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26124.0
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28714.193
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nibs.NativeHost", "Nibs.NativeHost\Nibs.NativeHost.csproj", "{8C370615-2218-4ED5-B9F8-0F66F2ED5263}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nibs.NativeHost", "Nibs.NativeHost\Nibs.NativeHost.csproj", "{8C370615-2218-4ED5-B9F8-0F66F2ED5263}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nibs.NativeHost.Tests", "Nibs.NativeHost.Tests\Nibs.NativeHost.Tests.csproj", "{9C66E431-0B94-4307-A9D4-A54223D77FD1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nibs.NativeHost.Tests", "Nibs.NativeHost.Tests\Nibs.NativeHost.Tests.csproj", "{9C66E431-0B94-4307-A9D4-A54223D77FD1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Files", "Solution Files", "{4970A6EE-2288-4918-8D60-77E379C5A96A}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		.gitignore = .gitignore
+		LICENSE = LICENSE
+		nuget.config = nuget.config
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,9 +24,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{8C370615-2218-4ED5-B9F8-0F66F2ED5263}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -44,5 +50,11 @@ Global
 		{9C66E431-0B94-4307-A9D4-A54223D77FD1}.Release|x64.Build.0 = Release|Any CPU
 		{9C66E431-0B94-4307-A9D4-A54223D77FD1}.Release|x86.ActiveCfg = Release|Any CPU
 		{9C66E431-0B94-4307-A9D4-A54223D77FD1}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9AA0701A-A0AF-49FE-9B1E-840EE96FAE59}
 	EndGlobalSection
 EndGlobal
