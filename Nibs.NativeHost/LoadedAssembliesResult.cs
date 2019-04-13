@@ -7,7 +7,7 @@ using System.Text.Json;
 
 namespace Nibs.NativeHost
 {
-    internal class LoadedAssembliesResult : ILoadedAssembliesResult {
+    public class LoadedAssembliesResult : ILoadedAssembliesResult {
         public LoadedAssembliesResult(IList<NativeAssemblyDescription>? assembliesLoaded, IList<string>? assembliesNotFound)
         {
             AssembliesLoaded = assembliesLoaded ?? new List<NativeAssemblyDescription>();

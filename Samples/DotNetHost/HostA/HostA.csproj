@@ -1,0 +1,40 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+		<OutputType>Library</OutputType>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <RuntimeIdentifiers>win-x64;osx-x64;linux-x64</RuntimeIdentifiers>
+    <NativeLib>Static</NativeLib>
+    <RootNamespace>HostA</RootNamespace>
+    <LangVersion>8.0</LangVersion>
+    <NullableContextOptions>enable</NullableContextOptions>
+	</PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <LangVersion>8.0</LangVersion>
+    <NullableContextOptions>enable</NullableContextOptions>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <LangVersion>8.0</LangVersion>
+    <NullableContextOptions>enable</NullableContextOptions>
+  </PropertyGroup>
+	<ItemGroup>
+    <PackageReference Include="Microsoft.DotNet.ILCompiler" Version="1.0.0-alpha-*" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.2.0" />
+    <PackageReference Include="System.Runtime.InteropServices" Version="4.3.*" />
+	</ItemGroup>
+  <ItemGroup>
+		<ProjectReference Include="..\..\..\Nibs.NativeHost\Nibs.NativeHost.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <RdXmlFile Include="rd.xml" />
+    <IlcArg Include="--stacktracedata" />
+  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\..\Nibs.NativeHost.Embed\Nibs.NativeHost.Embed.csproj" />
+    <IlcCompileInput Include="$([System.IO.Path]::GetFullPath(..\..\..\Nibs.NativeHost.Embed\bin\$(Configuration)\$(TargetFramework)\$(RuntimeIdentifier)\Nibs.NativeHost.Embed.dll))" />
+	</ItemGroup>
+	<!--<Target Name="ILMerge" AfterTargets="Build" BeforeTargets="Publish">
+		<Exec Command="$(ILMergeConsolePath) /out:&quot;$(MSBuildProjectDirectory)\$(OutputPath)HostAMerged.dll&quot; &quot;$(MSBuildProjectDirectory)\$(OutputPath)HostA.dll&quot; &quot;$(MSBuildProjectDirectory)\$(OutputPath)Nibs.NativeHost.dll&quot;" />
+	</Target>-->
+</Project>

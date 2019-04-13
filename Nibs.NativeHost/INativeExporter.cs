@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Nibs.NativeHost
 {
-    internal interface INativeExporter
+    public interface INativeExporter
     {
         ReadOnlySpan<byte> Export(Func<INativeSourceSettingLoadResult> loadConfiguration, Func<INativeSourceSettings, ILoadedAssembliesResult> getAssemblyDescriptions);
 

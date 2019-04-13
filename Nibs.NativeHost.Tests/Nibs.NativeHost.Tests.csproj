@@ -19,7 +19,9 @@
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Nibs.NativeHost.Embed\Nibs.NativeHost.Embed.csproj" />
     <ProjectReference Include="..\Nibs.NativeHost\Nibs.NativeHost.csproj" />
+		<ProjectReference Include="..\Samples\DotNetHost\HostA\HostA.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="config.json">

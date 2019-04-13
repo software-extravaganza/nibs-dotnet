@@ -1,6 +1,6 @@
 namespace Nibs.NativeHost
 {
-    internal interface ILoadedAssembliesResult
+	public interface ILoadedAssembliesResult
     {
         System.Collections.Generic.IList<NativeAssemblyDescription> AssembliesLoaded { get; }
         System.Collections.Generic.IList<string> AssembliesNotFound { get; }

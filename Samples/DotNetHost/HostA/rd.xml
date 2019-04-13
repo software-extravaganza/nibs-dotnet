@@ -1,0 +1,10 @@
+<Directives xmlns="http://schemas.microsoft.com/netfx/2013/01/metadata"> 
+    <Application>
+        <Assembly Name="HostA" Dynamic="Required All" DataContractSerializer="All"/>     
+		<Assembly Name="Nibs.NativeHost" Dynamic="Required All" DataContractSerializer="All"/>     
+		<Assembly Name="Nibs.NativeHost.Embed" Dynamic="Required All" DataContractSerializer="All"/>     
+        <!-- <Type Name="System.Linq.Expressions.ExpressionCreator{System.Func{System.Object,System.Object}}" Serialize="Required All" />
+          -->
+
+    </Application>   
+</Directives>

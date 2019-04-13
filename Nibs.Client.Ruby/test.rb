@@ -107,7 +107,7 @@ module App
         end
 
         if native_method["ReturnType"] == "pointer"
-          NativeBridge.free_ptr(resultprt)
+          NativeBridge.nibs__free_ptr(resultprt)
         end
 
         return result
@@ -117,8 +117,9 @@ module App
     def self.process(lib_path)
       ffi_lib lib_path
       functions = [
-        [:free_ptr, [:pointer], :void],
-        [:get_native_metadata, [:int, :int], :pointer],
+        [:nibs__free_ptr, [:pointer], :void],
+				[:nibs__get_native_metadata, [:int, :int], :pointer],
+				[:test__add, [:int, :int], :int]
       ]
     
       functions.each do |func|
@@ -129,9 +130,9 @@ module App
         end
       end
 
-      resultprt = NativeBridge.get_native_metadata(2, 1)
+      resultprt = NativeBridge.nibs__get_native_metadata(2, 1)
       result = String.new(resultprt.read_string)
-      NativeBridge.free_ptr(resultprt)
+      NativeBridge.nibs__free_ptr(resultprt)
       puts "###############################"
       puts "#####   NATIVE METADATA   #####"
       puts "###############################"
@@ -157,11 +158,11 @@ end
 
 
 
-entry_lib = File.join(File.absolute_path(File.dirname(__FILE__)), "../Library/bin/release/netcoreapp3.0/win-x64/native/Library.dll");
+entry_lib = File.join(File.absolute_path(File.dirname(__FILE__)), "../Samples/DotNetHost/HostA/bin/release/netcoreapp3.0/win-x64/publish/HostA.dll");
 App::NativeBridge.process(entry_lib)
 
-puts App::NativeBridge::Library::NativeCore.subtract(2, 5)
-puts App::NativeBridge::Library::NativeCore.append("me", "too")
+puts App::NativeBridge::HostA::NativeCode.subtract(2, 5)
+puts App::NativeBridge::HostA::NativeCode.append("me", "too")
 
 
 

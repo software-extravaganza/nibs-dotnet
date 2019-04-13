@@ -7,7 +7,7 @@ using System.Text.Json;
 
 namespace Nibs.NativeHost
 {
-    internal class JsonExporter : INativeExporter
+    public class JsonExporter : INativeExporter
     {
         public const int BUFFER_SIZE = 500;
         public ReadOnlySpan<byte> Export(Func<INativeSourceSettingLoadResult> loadConfiguration, Func<INativeSourceSettings, ILoadedAssembliesResult> getAssemblyDescriptions)
