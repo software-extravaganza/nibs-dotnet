@@ -5,22 +5,22 @@ using Nibs.NativeHost.Attributes;
 
 namespace HostA {
 	public class NativeCode {
-		[NativeCallable (EntryPoint = "add", CallingConvention = CallingConvention.Cdecl)]
-		public static int Add (int a, int b) {
+		[NativeCallable(EntryPoint = "add", CallingConvention = CallingConvention.Cdecl)]
+		public static int Add(int a, int b) {
 			return a + b;
 		}
 
-		[NativeCallable (EntryPoint = "subtract", CallingConvention = CallingConvention.Cdecl)]
-		public static int Subtract (int a, int b) {
-			return a - b - 50;
+		[NativeCallable(EntryPoint = "subtract", CallingConvention = CallingConvention.Cdecl)]
+		public static int Subtract(int a, int b) {
+			return a - b;
 		}
 
-		[NativeCallable (EntryPoint = "append", CallingConvention = CallingConvention.Cdecl)]
+		[NativeCallable(EntryPoint = "append", CallingConvention = CallingConvention.Cdecl)]
 		[
-			return :IntendedType (typeof (string))
+			return :IntendedType(typeof(string))
 		]
-		public static IntPtr Append ([IntendedType (typeof (string))] IntPtr a, [IntendedType (typeof (string))] IntPtr b) {
-			return Marshal.StringToCoTaskMemUTF8 (Marshal.PtrToStringUTF8 (a) + Marshal.PtrToStringUTF8 (b));
+		public static IntPtr Append([IntendedType(typeof(string))] IntPtr a, [IntendedType(typeof(string))] IntPtr b) {
+			return Marshal.StringToCoTaskMemUTF8(Marshal.PtrToStringUTF8(a) + Marshal.PtrToStringUTF8(b));
 		}
 	}
 }

@@ -48,7 +48,7 @@ namespace Nibs.NativeHost {
 		}
 
 		private static ILoadedAssembliesResult processAssemblies(INativeExporter exporter, int programmingPlaformNumber, INativeSourceSettings nativeSourceSettings) {
-			var assemblies = new Dictionary<string, NativeAssemblyDescription>();
+			var assemblies = new List<NativeAssemblyDescription>();
 			var assembliesNotFound = new List<string>();
 
 			var assembliesLoaded = AppDomain.CurrentDomain.GetAssemblies().ToList();
@@ -70,17 +70,17 @@ namespace Nibs.NativeHost {
 			// 		assembliesNotFound.Add(exactAssemblyPath);
 			// 	}
 			// }
-
-			foreach (var assembly in assembliesLoaded.GroupBy(a => a.IsDynamic ? a.FullName : a.Location).Select(g => g.First()).ToList()) {
+			//.GroupBy(a => a.IsDynamic ? a.FullName : a.Location).Select(g => g.First())
+			foreach (var assembly in assembliesLoaded.ToList()) {
 				var assemblyFile = new FileInfo($"{assembly.FullName.Split(",").FirstOrDefault()}.dll");
 				var namespaces = ProcessAssembly(assembly, (ProgrammingPlatform)programmingPlaformNumber);
 				if (namespaces.Count > 0) {
-					assemblies.Add(assemblyFile.FullName, new NativeAssemblyDescription(assemblyFile.Name, assemblyFile.DirectoryName.Replace("\\", "/")) { Namespaces = namespaces });
+					assemblies.Add(new NativeAssemblyDescription(assemblyFile.Name, assemblyFile.DirectoryName.Replace("\\", "/")) { Namespaces = namespaces });
 				}
 			}
 
-			throw new Exception(assemblies.Count <= 0 ? "No assemblies" : string.Join(";", assemblies.Values.Select(a => a.FullPath)));
-			return new LoadedAssembliesResult(assemblies.Values.ToList(), assembliesNotFound);
+			//throw new Exception(assemblies.Count <= 0 ? "No assemblies" : string.Join(";", assemblies.Values.Select(a => a.FullPath)));
+			return new LoadedAssembliesResult(assemblies.ToList(), assembliesNotFound);
 		}
 
 		private static NativeSourceSettingLoadResult loadConfiguration() {
@@ -105,6 +105,7 @@ namespace Nibs.NativeHost {
 
 		public static List<NativeNamespaceDescription> ProcessAssembly(Assembly assembly, ProgrammingPlatform progammingPlaformNumber) {
 			var namespaces = new Dictionary<string, NativeNamespaceDescription>();
+			var badTypeNameExpression = new Regex(@"^((__)|(.*[<>`]))");
 
 			//var methodsAndAttributes = from methodInfo in typeof(Library).GetMethods(BindingFlags.Static | BindingFlags.Public) let nativeAttribute = methodInfo.GetCustomAttribute(typeof(NativeCallableAttribute), true) as NativeCallableAttribute  where nativeAttribute != null select GetNativeMethodFrom(methodInfo, nativeAttribute);
 			Type[] types;
@@ -112,29 +113,49 @@ namespace Nibs.NativeHost {
 				types = assembly.GetTypes();
 			} catch (ReflectionTypeLoadException rtlex) {
 				types = rtlex.Types.Where(t => t != null).ToArray();
+				return namespaces.Values.ToList();
+			} catch (TypeLoadException) {
+				return namespaces.Values.ToList();
 			}
 
 			foreach (var typeFound in types) {
-				//try {
-				foreach (var methodInfo in typeFound.GetMethods(BindingFlags.Static | BindingFlags.Public)) {
-					var nativeAttribute = methodInfo.GetCustomAttribute(typeof(NativeCallableAttribute), true)as NativeCallableAttribute;
-					if (nativeAttribute == null) {
+				try {
+					var currentTypeName = typeFound?.Name;
+					var currentNamespaceName = typeFound?.Namespace;
+
+					if (string.IsNullOrWhiteSpace(currentTypeName) || string.IsNullOrWhiteSpace(currentNamespaceName)) {
 						continue;
 					}
 
-					var currentMethodName = nativeAttribute.EntryPoint;
-					var currentTypeName = methodInfo?.DeclaringType?.Name;
-					var currentNamespaceName = methodInfo?.DeclaringType?.Namespace;
+					if (badTypeNameExpression.IsMatch(currentTypeName)) {
+						continue;
+					}
+
 					var currentNamespace = GetNameSpaceDesciptorForPath(namespaces, currentNamespaceName, true);
 					if (!currentNamespace.Classes.ContainsKey(currentTypeName)) {
 						currentNamespace.Classes.Add(currentTypeName, new NativeClassDescription(currentTypeName));
 					}
+					//try {
+					foreach (var memberInfo in typeFound.GetMembers(BindingFlags.Static | BindingFlags.Public)) {
+						var methodInfo = memberInfo as MethodInfo;
+						if (methodInfo == null) {
+							continue;
+						}
 
-					var currentClass = currentNamespace.Classes[currentTypeName];
-					if (!currentClass.Methods.ContainsKey(currentMethodName)) {
-						currentClass.Methods.Add(currentMethodName, GetNativeMethodFrom(progammingPlaformNumber, methodInfo, nativeAttribute));
+						var nativeAttribute = methodInfo.GetCustomAttributes(true).Where(a => a.GetType() == typeof(NativeCallableAttribute)).Select(a => a as NativeCallableAttribute).FirstOrDefault();
+						if (nativeAttribute == null) {
+							continue;
+						}
+
+						//		var attributes = methodInfo.GetCustomAttributes(true)?.Select(a => a as Attribute).ToList() ?? new List<Attribute>();
+						var currentMethodName = methodInfo.Name; //nativeAttribute.EntryPoint;
+						var currentClass = currentNamespace.Classes[currentTypeName];
+						if (!currentClass.Methods.ContainsKey(currentMethodName)) {
+							//currentClass.Methods.Add(currentMethodName, GetDebugMethodFrom(progammingPlaformNumber, methodInfo, attributes));
+							currentClass.Methods.Add(currentMethodName, GetNativeMethodFrom(progammingPlaformNumber, methodInfo, nativeAttribute));
+						}
 					}
-				}
+				} catch (TypeLoadException) {}
 				//} catch (TypeLoadException tlex) {}
 			}
 
@@ -200,11 +221,43 @@ namespace Nibs.NativeHost {
 
 		public static NativeMethodDescription GetNativeMethodFrom(ProgrammingPlatform programmingPlatform, MethodInfo methodInfo, NativeCallableAttribute nativeAttribute) {
 			// Passed through GetNativeType twice, once for hte native typecoversion in C# and another for the destination type (e.g. ruby, python)
+			IList<INativeParameterDescription> parameters = new List<INativeParameterDescription>();
+			var typeLoadExceptionOccured = false;
+			var returnTypeName = string.Empty;
+			try {
+				parameters = GetNativeParametersFrom(programmingPlatform, methodInfo);
+				returnTypeName = methodInfo.ReturnType.FullName;
+			} catch (TypeLoadException) {
+				typeLoadExceptionOccured = true;
+			}
+
 			return new NativeMethodDescription {
 				Name = nativeAttribute.EntryPoint,
-					ReturnType = NativeTypeDescription.FromString(GetNativeType(programmingPlatform, GetNativeType(methodInfo.ReturnType.FullName))),
+					ReturnType = NativeTypeDescription.FromString(GetNativeType(programmingPlatform, GetNativeType(returnTypeName))),
 					IntendedReturnType = NativeTypeDescription.FromString(GetNativeType(programmingPlatform, GetNativeType(methodInfo.ReturnTypeCustomAttributes.GetCustomAttributes(true).Where(c => c is IntendedTypeAttribute).Select(c => c as IntendedTypeAttribute).FirstOrDefault()?.Type.FullName))),
-					Parameters = GetNativeParametersFrom(programmingPlatform, methodInfo)
+					Parameters = parameters,
+					HadTypeException = typeLoadExceptionOccured,
+			};
+		}
+
+		public static NativeMethodDescription GetDebugMethodFrom(ProgrammingPlatform programmingPlatform, MethodInfo methodInfo, List<Attribute> attributes) {
+			IList<INativeParameterDescription> parameters = new List<INativeParameterDescription>();
+			var typeLoadExceptionOccured = false;
+			var returnTypeName = string.Empty;
+			try {
+				parameters = GetNativeParametersFrom(programmingPlatform, methodInfo);
+				returnTypeName = methodInfo.ReturnType.FullName;
+			} catch (TypeLoadException) {
+				typeLoadExceptionOccured = true;
+			}
+			// Passed through GetNativeType twice, once for hte native typecoversion in C# and another for the destination type (e.g. ruby, python)
+			return new NativeMethodDescription {
+				Name = methodInfo.Name,
+					ReturnType = NativeTypeDescription.FromString(GetNativeType(programmingPlatform, GetNativeType(returnTypeName))),
+					IntendedReturnType = NativeTypeDescription.FromString(GetNativeType(programmingPlatform, GetNativeType(methodInfo.ReturnTypeCustomAttributes.GetCustomAttributes(true).Where(c => c is IntendedTypeAttribute).Select(c => c as IntendedTypeAttribute).FirstOrDefault()?.Type.FullName))),
+					Parameters = parameters,
+					HadTypeException = typeLoadExceptionOccured,
+					Attributes = attributes.Select(a => a.GetType().Name).ToList()
 			};
 		}
 

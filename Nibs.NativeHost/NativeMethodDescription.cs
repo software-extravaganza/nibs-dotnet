@@ -1,13 +1,17 @@
 using System.Collections.Generic;
 using System.Text.Json;
 
-namespace Nibs.NativeHost
-{
-    public class NativeMethodDescription : INativeMethodDescription {
-        public string Name { get; set; } = string.Empty;
-        public IList<INativeParameterDescription> Parameters { get; set; } = new List<INativeParameterDescription> ();
-    
-        public NativeTypeDescription? ReturnType { get; set; }
-        public NativeTypeDescription? IntendedReturnType { get; set; }
-    }
+namespace Nibs.NativeHost {
+	public class NativeMethodDescription : INativeMethodDescription {
+		public string Name { get; set; } = string.Empty;
+		public IList<INativeParameterDescription> Parameters { get; set; } = new List<INativeParameterDescription>();
+
+		public NativeTypeDescription? ReturnType { get; set; }
+		public NativeTypeDescription? IntendedReturnType { get; set; }
+
+		public IList<string> Attributes { get; set; } = new List<string>();
+
+		public bool HadTypeException { get; set; }
+	}
+
 }

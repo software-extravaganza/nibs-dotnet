@@ -1,5 +1,7 @@
 require 'ffi'
 require 'json'
+require 'digest/sha1'
+require 'fileutils'
 
 module App
   class NativeBridge extend FFI::Library
@@ -44,8 +46,17 @@ module App
       end
     end
 
-    def self.prepareNamespace(parent, native_namespace, assembly_path)
-      current_namespace = parent.const_set(native_namespace["Name"], Module.new)
+		def self.prepareNamespace(parent, native_namespace, assembly_path)
+			if native_namespace["Name"] == "Data"
+				native_namespace["Name"] = "Data_"
+			end
+
+			if parent.const_defined?(native_namespace["Name"])
+				current_namespace = parent.const_get(native_namespace["Name"])
+			else
+				current_namespace = parent.const_set(native_namespace["Name"], Module.new)
+			end
+
       prepareNamespaces(parent, native_namespace["Namespaces"], assembly_path)
       native_namespace["Classes"].each do |native_class|
         begin
@@ -57,9 +68,19 @@ module App
     def self.prepareClass(parent, native_class, assembly_path)
       internal_class_container = Class.new(NativeAgent)
       external_class_container = Class.new
-      # NativeAgent.hook_up(internal_class_container, Parent)
-      internal_class = parent.const_set("#{native_class["Name"]}_internal", internal_class_container)
-      external_class = parent.const_set(native_class["Name"], external_class_container)
+			# NativeAgent.hook_up(internal_class_container, Parent)
+			if parent.const_defined?(native_class["Name"])
+				external_class = parent.const_get(native_class["Name"])
+			else
+				external_class = parent.const_set(native_class["Name"], external_class_container)
+			end
+
+			if parent.const_defined?("#{native_class["Name"]}_internal")
+      	internal_class = parent.const_get("#{native_class["Name"]}_internal")
+			else
+				internal_class = parent.const_set("#{native_class["Name"]}_internal", internal_class_container)
+			end
+
       native_class["Methods"].each do |native_method|
         begin
           prepareMethod(internal_class, external_class, native_method, assembly_path)
@@ -118,8 +139,7 @@ module App
       ffi_lib lib_path
       functions = [
         [:nibs__free_ptr, [:pointer], :void],
-				[:nibs__get_native_metadata, [:int, :int], :pointer],
-				[:test__add, [:int, :int], :int]
+				[:nibs__get_native_metadata, [:int, :int], :pointer]
       ]
     
       functions.each do |func|
@@ -128,17 +148,34 @@ module App
         rescue Object => e
           puts "Could not attach #{func}, #{e.message}"
         end
-      end
+			end
 
-      resultprt = NativeBridge.nibs__get_native_metadata(2, 1)
-      result = String.new(resultprt.read_string)
-      NativeBridge.nibs__free_ptr(resultprt)
-      puts "###############################"
-      puts "#####   NATIVE METADATA   #####"
-      puts "###############################"
-      puts result
-      puts "###############################"
-      
+			libHash = Digest::SHA1.hexdigest(lib_path)
+			cacheDirectoryName = "cache/#{libHash}"
+			if not Dir.exist?(cacheDirectoryName)
+				FileUtils.mkdir_p cacheDirectoryName
+			end
+
+			libModifiedTime = File.mtime(lib_path)
+			libHash = Digest::SHA1.hexdigest(lib_path)
+			cacheFileName = Digest::SHA1.hexdigest("#{libModifiedTime} ~ #{lib_path}")
+			cacheFile = cacheDirectoryName + "/" + cacheFileName + ".json"
+			if File.file?(cacheFile)
+				file = File.open(cacheFile)
+				result = file.read
+			else
+				FileUtils.rm_rf(Dir.glob("#{cacheDirectoryName}/*"))
+				resultprt = NativeBridge.nibs__get_native_metadata(2, 1)
+				result = String.new(resultprt.read_string)
+				NativeBridge.nibs__free_ptr(resultprt)
+				# puts "###############################"
+				# puts "#####   NATIVE METADATA   #####"
+				# puts "###############################"
+				# puts result
+				# puts "###############################"
+      	File.open(cacheFile, 'w') { |file| file.write(result) }
+			end
+
       json_metadata = JSON.parse(result)
 
       if json_metadata.has_key?("Error")
