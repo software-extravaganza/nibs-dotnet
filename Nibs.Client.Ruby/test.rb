@@ -151,7 +151,7 @@ module App
 			end
 
 			libHash = Digest::SHA1.hexdigest(lib_path)
-			cacheDirectoryName = "cache/#{libHash}"
+			cacheDirectoryName = "nibs_cache/#{libHash}"
 			if not Dir.exist?(cacheDirectoryName)
 				FileUtils.mkdir_p cacheDirectoryName
 			end
