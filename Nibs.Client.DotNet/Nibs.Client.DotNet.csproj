@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <RootNamespace>Nibs.Client.DotNet</RootNamespace>
+		<GenerateProgramFile>false</GenerateProgramFile>
+  </PropertyGroup>
+	<Target Name="BuildNativeDependencies" BeforeTargets="BeforeBuild">
+		<MakeDir Directories="$(ProjectDir)lib" />
+		<Message Text="Compiling the HostA sample project as a native assembly." />
+		<Exec Command="dotnet publish -p:NativeLib=Shared -r win-x64 -c release ..\Samples\DotNetHost\HostA\HostA.csproj" />
+	</Target>
+	<Target Name="CopyNativeDependencies" AfterTargets="BuildNativeDependencies">
+		<Message Text="Copying the HostA native assembly to the output as NativeHostA.dll." />
+		<Copy SourceFiles="..\Samples\DotNetHost\HostA\bin\Release\netcoreapp3.0\win-x64\publish\HostA.dll" DestinationFiles="$(ProjectDir)\lib\NativeHostA.dll" />
+	</Target>
+	<ItemGroup>
+		<None Update="lib\NativeHostA.dll">
+			<Link>NativeHostA.dll</Link>
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
+</Project>

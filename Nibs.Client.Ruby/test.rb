@@ -201,6 +201,7 @@ App::NativeBridge.process(entry_lib)
 puts App::NativeBridge::HostA::NativeCode.subtract(2, 5)
 puts App::NativeBridge::HostA::NativeCode.append("me", "too")
 
+puts App::NativeBridge::HostA::Fibonacci.fibonacci_recursive(50)
 
 
 

@@ -24,15 +24,15 @@
     <PackageReference Include="System.Runtime.InteropServices" Version="4.3.*" />
 	</ItemGroup>
   <ItemGroup>
-		<ProjectReference Include="..\..\..\Nibs.NativeHost\Nibs.NativeHost.csproj" />
+		<ProjectReference Include="$(ProjectDir)\..\..\..\Nibs.NativeHost\Nibs.NativeHost.csproj" />
   </ItemGroup>
   <ItemGroup>
     <RdXmlFile Include="rd.xml" />
     <IlcArg Include="--stacktracedata" />
   </ItemGroup>
 	<ItemGroup>
-		<ProjectReference Include="..\..\..\Nibs.NativeHost.Embed\Nibs.NativeHost.Embed.csproj" />
-    <IlcCompileInput Include="$([System.IO.Path]::GetFullPath(..\..\..\Nibs.NativeHost.Embed\bin\$(Configuration)\$(TargetFramework)\$(RuntimeIdentifier)\Nibs.NativeHost.Embed.dll))" />
+		<ProjectReference Include="$(ProjectDir)\..\..\..\Nibs.NativeHost.Embed\Nibs.NativeHost.Embed.csproj" />
+    <IlcCompileInput Include="$([System.IO.Path]::GetFullPath($(ProjectDir)\..\..\..\Nibs.NativeHost.Embed\bin\$(Configuration)\$(TargetFramework)\$(RuntimeIdentifier)\Nibs.NativeHost.Embed.dll))" />
 	</ItemGroup>
 	<!--<Target Name="ILMerge" AfterTargets="Build" BeforeTargets="Publish">
 		<Exec Command="$(ILMergeConsolePath) /out:&quot;$(MSBuildProjectDirectory)\$(OutputPath)HostAMerged.dll&quot; &quot;$(MSBuildProjectDirectory)\$(OutputPath)HostA.dll&quot; &quot;$(MSBuildProjectDirectory)\$(OutputPath)Nibs.NativeHost.dll&quot;" />
