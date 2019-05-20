@@ -37,3 +37,6 @@ Then run the tester:
 ``` bash
 ruby test.rb
 ```
+
+## Try it out ![dotnet try Enabled](https://img.shields.io/badge/Try_.NET-Enabled-501078.svg) ##
+[Run live examples here](Documentation/TRY.md)

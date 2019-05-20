@@ -9,8 +9,7 @@ using ClientNibs = Nibs.Client.DotNet;
 using Nibs.NativeHost;
 
 namespace Nibs.NativeHost.Benchmarks {
-	[IterationCount(2000)]
-	[InvocationCount(1, 1)]
+
 	public class ArithmeticBenchmarks {
 		[Params(100, 5000)]
 		public int A;

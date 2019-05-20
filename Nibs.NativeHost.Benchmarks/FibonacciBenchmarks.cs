@@ -10,10 +10,8 @@ using Nibs.NativeHost;
 
 namespace Nibs.NativeHost.Benchmarks {
 
-	[IterationCount(100)]
-	[InvocationCount(1,1)]
 	public class FibonacciBenchmarks {
-		[Params(20, 25, 30, 35)]
+		[Params(5, 10, 15, 20, 25, 30, 35, 40, 45)]
 		public int N;
 
 		[GlobalSetup]

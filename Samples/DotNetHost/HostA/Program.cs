@@ -4,7 +4,7 @@ using Nibs.NativeHost;
 using Nibs.NativeHost.Attributes;
 
 namespace HostA {
-	public class NativeCode {
+	public class Arithmetic {
 		[NativeCallable(EntryPoint = "add", CallingConvention = CallingConvention.Cdecl)]
 		public static int Add(int a, int b) {
 			return a + b;

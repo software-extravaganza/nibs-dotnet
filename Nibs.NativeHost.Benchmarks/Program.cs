@@ -16,16 +16,14 @@ namespace Nibs.NativeHost.Benchmarks {
 			ManualConfig
 			.Create(DefaultConfig.Instance)
 			//.With(Job.RyuJitX64)
-			.With(Job.Dry
+			.With(Job.Core
 				.With(Platform.X64)
 				.With(Jit.RyuJit)
 				.With(Runtime.Core)
-				.WithLaunchCount(5)
-				.WithMaxRelativeError(0.01)
 				.WithId("netcore"))
 			.With(MemoryDiagnoser.Default)
 			.With(HtmlExporter.Default)
-			//.With(RPlotExporter.Default)
+			.With(RPlotExporter.Default)
 			.With(MarkdownExporter.StackOverflow)
 			.With(ExecutionValidator.FailOnError)
 			.With(BaselineValidator.FailOnError)

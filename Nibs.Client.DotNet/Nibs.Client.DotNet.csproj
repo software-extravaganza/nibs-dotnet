@@ -1,22 +1,31 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp3.0</TargetFramework>
-    <RootNamespace>Nibs.Client.DotNet</RootNamespace>
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>netcoreapp3.0</TargetFramework>
+		<RootNamespace>Nibs.Client.DotNet</RootNamespace>
 		<GenerateProgramFile>false</GenerateProgramFile>
-  </PropertyGroup>
-	<Target Name="BuildNativeDependencies" BeforeTargets="BeforeBuild">
-		<MakeDir Directories="$(ProjectDir)lib" />
+	</PropertyGroup>
+	<Target Name="CleanNativeDependencies" AfterTargets="Clean">
+		<Delete Files="$(OutDir)\NativeHostA.dll" />
+	</Target>
+	<Target Name="BuildNativeDependencies" BeforeTargets="BeforeBuild" Condition="!Exists('$(ProjectDir)..\Samples\DotNetHost\HostA\bin\$(Configuration)\netcoreapp3.0\win-x64\publish\HostA.dll')">
 		<Message Text="Compiling the HostA sample project as a native assembly." />
-		<Exec Command="dotnet publish -p:NativeLib=Shared -r win-x64 -c release ..\Samples\DotNetHost\HostA\HostA.csproj" />
+		<Exec Command="dotnet publish -p:NativeLib=Shared -r win-x64 -c $(Configuration) $(ProjectDir)..\Samples\DotNetHost\HostA\HostA.csproj" />
 	</Target>
-	<Target Name="CopyNativeDependencies" AfterTargets="BuildNativeDependencies">
+	<Target Name="CopyNativeDependencies" AfterTargets="BuildNativeDependencies" Condition="Exists('$(ProjectDir)..\Samples\DotNetHost\HostA\bin\$(Configuration)\netcoreapp3.0\win-x64\publish\HostA.dll')">
 		<Message Text="Copying the HostA native assembly to the output as NativeHostA.dll." />
-		<Copy SourceFiles="..\Samples\DotNetHost\HostA\bin\Release\netcoreapp3.0\win-x64\publish\HostA.dll" DestinationFiles="$(ProjectDir)\lib\NativeHostA.dll" />
+		<Copy SourceFiles="$(ProjectDir)..\Samples\DotNetHost\HostA\bin\$(Configuration)\netcoreapp3.0\win-x64\publish\HostA.dll" DestinationFiles="$(OutDir)\NativeHostA.dll" />
 	</Target>
+	<!-- <Target Name="IncludeNativeDependencies" AfterTargets="CopyNativeDependencies" Condition="Exists('$(ProjectDir)lib\$(Configuration)\NativeHostA.dll')">
+		<ItemGroup>
+			<None Update="$(ProjectDir)lib\$(Configuration)\NativeHostA.dll">
+				<Link>NativeHostA.dll</Link>
+				<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+			</None>
+		</ItemGroup>
+	</Target> -->
 	<ItemGroup>
-		<None Update="lib\NativeHostA.dll">
-			<Link>NativeHostA.dll</Link>
+		<None Update="$(ProjectDir)config.json">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 	</ItemGroup>
